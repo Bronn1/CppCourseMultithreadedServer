@@ -69,7 +69,7 @@ void Server::handle_connections()
     std::cerr << "Worker thread successfully started..\n";
     constexpr int kReadBufMax = 1024;
     std::string recieved_msg{""};
-    int bytes_read = 0;
+    //int bytes_read = 0;
     while(true){
         auto sock_with_event = m_connectionEvents.wait_and_pop();
         recieved_msg.clear();
@@ -77,10 +77,10 @@ void Server::handle_connections()
         memset(read_buf, '\0', kReadBufMax);
 
         int bytes = recv(*sock_with_event, read_buf, kReadBufMax - 1, 0);
-        bytes_read += bytes;
+        //bytes_read += bytes;
         if(bytes <= 0 && errno != EAGAIN){
-            std::cerr << "Connection closed or error ocurred: " << std::strerror(errno) << '\n';
-            shutdown(*sock_with_event, SHUT_RDWR);
+            //std::cerr << "Connection closed or error ocurred: " << std::strerror(errno) << '\n';
+            //shutdown(*sock_with_event, SHUT_RDWR);
             close(*sock_with_event);
         }
         else if(errno == EAGAIN){
@@ -88,7 +88,7 @@ void Server::handle_connections()
             //std::cerr << "Msg received EAGAIN: " << recieved_msg << '\n';  
         }
         else if(bytes > 0) {
-            recieved_msg.append(read_buf, bytes_read);
+            recieved_msg.append(read_buf, bytes);
             send_response(*sock_with_event, recieved_msg);
             //std::cerr << "Msg received: \n" << recieved_msg << '\n'; 
         }
@@ -175,7 +175,7 @@ std::string Request_parser::get_target_filename(const std::string& http_request)
     const std::string mainPage{"index.html"};
     //  magic numbers there but this part is not  
     // purpose of this exam so i did as fast as possible
-    std::cout << http_request << std::endl;
+    //std::cout << http_request << std::endl;
     std::size_t pos1 = http_request.find("GET /");
     std::size_t pos2 = http_request.find(" HTTP/1");
     if (pos1 == std::string::npos || pos2 == std::string::npos) return "";
